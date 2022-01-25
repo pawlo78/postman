@@ -1,0 +1,429 @@
+{
+	"info": {
+		"_postman_id": "f0835aac-6eb7-4a5a-9eeb-1bc6e4bd8159",
+		"name": "WpressTestsComments",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateNewPost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let title = \"NEW POST\";\r",
+							"let content = \"Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\";\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Post is created\",() => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title is correct\", () => {\r",
+							"    pm.expect(response.title.raw).to.equal(title);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.raw).to.equal(content);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"postId\", response.id);\r",
+							"pm.environment.set(\"title\", response.title.rendered);\r",
+							"pm.environment.set(\"content\", response.content.rendered);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{               \r\n        \"status\": \"publish\",\r\n        \"type\": \"post\",        \r\n        \"title\": \"NEW POST\",       \r\n        \"content\": \"Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\",        \r\n        \"excerpt\": \"Lorem Ipsum jest tekstem stosowanym jako przykładowy .....\",           \r\n        \"author\": 1,\r\n        \"featured_media\": 0,\r\n        \"comment_status\": \"open\",\r\n        \"ping_status\": \"open\",\r\n        \"sticky\": false,\r\n        \"template\": \"\",\r\n        \"format\": \"standard\",\r\n        \"meta\": []        \r\n}\r\n   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOnePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"let title = pm.environment.get('title');\r",
+							"let content = pm.environment.get('content');\r",
+							"\r",
+							"pm.test(\"Post is received\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title is correct\", () => {\r",
+							"    pm.expect(response.title.rendered).to.equal(title);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.rendered).to.equal(content);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/{{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						"{{postId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateNewComment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let content = \"Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th\";\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Comment is created\",() => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.raw).to.equal(content);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"commentId\", response.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{               \r\n        \"status\": \"publish\",\r\n        \"content\": \"Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th\",\r\n        \"excerpt\": \"Lorem ipsum, or lipsum as ...\",\r\n        \"author\": 1,\r\n        \"author_email\": \"xxxx@xxx.xxx\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/comments?post={{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"comments"
+					],
+					"query": [
+						{
+							"key": "post",
+							"value": "{{postId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOneComments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let content = \"<p>Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th</p>\\n\";\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Comment is received\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.rendered).to.equal(content);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/comments/{{commentId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"comments",
+						"{{commentId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetListComments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is ok\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response must be valid and have a body\", () => {\r",
+							"     pm.response.to.be.ok; \r",
+							"     pm.response.to.be.withBody;\r",
+							"     pm.response.to.be.json; \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/comments/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"comments",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateComment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let content = \"Update content\";\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Comment is retrieved\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.raw).to.equal(content);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{        \r\n        \"content\": \"Update content\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/comments/{{commentId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"comments",
+						"{{commentId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteComment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"let commentId = pm.environment.get(\"commentId\");\r",
+							"\r",
+							"pm.test(\"Post is deleted\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Proper id is returned\", () => {\r",
+							"    pm.expect(response.id).to.equal(commentId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/comments/{{commentId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"comments",
+						"{{commentId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeletePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"let postId = pm.environment.get(\"postId\");\r",
+							"\r",
+							"pm.test(\"Post is deleted\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Proper id is returned\", () => {\r",
+							"    pm.expect(response.id).to.equal(postId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/{{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						"{{postId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "xxxxx",
+				"type": "string"
+			},
+			{
+				"key": "xxxxx",
+				"value": "WIdR D4Sp kSzi I4cp 4jZK AU1s",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://wswoimtempie.pl/postman",
+			"type": "string"
+		}
+	]
+}

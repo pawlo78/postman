@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "e1b18c6c-4572-40e1-8d49-9a7164f1d1f2",
+		"name": "WpressTestsPosts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateNewPost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let title = \"NEW POST\";\r",
+							"let content = \"Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\";\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Post is created\",() => {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title is correct\", () => {\r",
+							"    pm.expect(response.title.raw).to.equal(title);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.raw).to.equal(content);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"postId\", response.id);\r",
+							"pm.environment.set(\"title\", response.title.rendered);\r",
+							"pm.environment.set(\"content\", response.content.rendered);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{               \r\n        \"status\": \"publish\",\r\n        \"type\": \"post\",        \r\n        \"title\": \"NEW POST\",       \r\n        \"content\": \"Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\",        \r\n        \"excerpt\": \"Lorem Ipsum jest tekstem stosowanym jako przykładowy .....\",           \r\n        \"author\": 1,\r\n        \"featured_media\": 0,\r\n        \"comment_status\": \"open\",\r\n        \"ping_status\": \"open\",\r\n        \"sticky\": false,\r\n        \"template\": \"\",\r\n        \"format\": \"standard\",\r\n        \"meta\": []        \r\n}\r\n   ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOnePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"let title = pm.environment.get('title');\r",
+							"let content = pm.environment.get('content');\r",
+							"\r",
+							"pm.test(\"Post is received\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title is correct\", () => {\r",
+							"    pm.expect(response.title.rendered).to.equal(title);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.rendered).to.equal(content);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/{{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						"{{postId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetListPosts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is ok\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response must be valid and have a body\", () => {\r",
+							"     pm.response.to.be.ok; \r",
+							"     pm.response.to.be.withBody;\r",
+							"     pm.response.to.be.json; \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdatePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let title = \"UPDATE POST\";       \r",
+							"let content = \"Abcd - Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\";\r",
+							"\r",
+							"let response = pm.response.json();\r",
+							"let postId = pm.environment.get(\"postId\");\r",
+							"\r",
+							"pm.test(\"Post is retrieved\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Proper id is returned\", () => {\r",
+							"    pm.expect(response.id).to.equal(postId);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Title is correct\", () => {\r",
+							"    pm.expect(response.title.raw).to.equal(title);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content is correct\", () => {\r",
+							"    pm.expect(response.content.raw).to.equal(content);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"UPDATE POST\",       \r\n    \"content\": \"Abcd - Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/{{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						"{{postId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeletePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"let postId = pm.environment.get(\"postId\");\r",
+							"\r",
+							"pm.test(\"Post is deleted\",() => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Proper id is returned\", () => {\r",
+							"    pm.expect(response.id).to.equal(postId);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/wp-json/wp/v2/posts/{{postId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"wp-json",
+						"wp",
+						"v2",
+						"posts",
+						"{{postId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "xxxxx",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "xxxxx",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://wswoimtempie.pl/postman",
+			"type": "string"
+		}
+	]
+}
